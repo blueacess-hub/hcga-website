@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Gallery - HCGA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { 50: '#f0f4f8', 100: '#d9e2ec', 200: '#bcccdc', 400: '#627d98', 600: '#243b53', 700: '#1a2e44', 800: '#102a43', 900: '#0a1929' },
+            gold: { 50: '#fff9e6', 100: '#fff0b3', 300: '#ffd54f', 400: '#ffc107', 500: '#d4a017', 600: '#b8860b' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', 'Noto Sans SC', sans-serif; }
+    [data-lang="zh"] { display: none; }
+    html[lang="zh"] [data-lang="en"] { display: none; }
+    html[lang="zh"] [data-lang="zh"] { display: block; }
+    html[lang="zh"] span[data-lang="zh"], html[lang="zh"] a[data-lang="zh"],
+    html[lang="zh"] h1[data-lang="zh"], html[lang="zh"] h2[data-lang="zh"],
+    html[lang="zh"] p[data-lang="zh"] { display: inline; }
+    html[lang="zh"] span[data-lang="en"], html[lang="zh"] a[data-lang="en"],
+    html[lang="zh"] h1[data-lang="en"], html[lang="zh"] h2[data-lang="en"],
+    html[lang="zh"] p[data-lang="en"] { display: none; }
+    /* Lightbox */
+    .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; }
+    .lightbox.active { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
+    .gallery-img { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .gallery-img:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  </style>
+</head>
+<body class="bg-navy-800 text-gray-800">
+
+  <!-- NAV -->
+  <nav class="bg-navy-800 text-white sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="https://static.wixstatic.com/media/e0bb63_fc76a093b6b948ac81c63dffc1f9ebb6~mv2.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/HCGA%20Logo_edited.png" alt="HCGA" class="w-10 h-10 rounded-full bg-white p-0.5">
+        <span class="font-bold text-base">HCGA</span>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-sm hover:text-gold-400 transition">
+          <span data-lang="en">← Back to Home</span><span data-lang="zh">← 返回首页</span>
+        </a>
+        <button id="lang-toggle" onclick="toggleLang()" class="px-3 py-1 text-xs font-bold border border-gold-400 text-gold-400 rounded hover:bg-gold-400 hover:text-navy-800 transition">EN / 中文</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="bg-navy-900 text-white py-10 text-center">
+    <h1 class="text-3xl md:text-4xl font-extrabold mb-2">
+      <span data-lang="en">📷 Event Photo Gallery</span><span data-lang="zh">📷 活动照片集</span>
+    </h1>
+    <p class="text-gray-300 text-sm">
+      <span data-lang="en">Highlights from HCGA tournaments and events</span>
+      <span data-lang="zh">HCGA 赛事与活动精彩瞬间</span>
+    </p>
+  </section>
+
+  <!-- 2026 Events -->
+  <section class="bg-white py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-navy-800 mb-4 border-b-4 border-gold-400 pb-2 inline-block">
+        <span data-lang="en">2026 Events</span><span data-lang="zh">2026 赛事</span>
+      </h2>
+      <h3 class="text-lg font-semibold text-navy-700 mb-3">Event #1: Northgate CC — March 22, 2026</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <img src="https://static.wixstatic.com/media/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg" alt="HCGA 2026 Event 1 group" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+        <img src="https://static.wixstatic.com/media/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg" alt="HCGA 2026 Event 1 tournament" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+        <img src="https://static.wixstatic.com/media/187e4a_deb823567e15413e90febb417c4305c3~mv2.jpeg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/187e4a_deb823567e15413e90febb417c4305c3~mv2.jpeg" alt="HCGA 2026 Event 1 awards" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+        <img src="https://static.wixstatic.com/media/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg" alt="HCGA 2026 Event 1 celebration" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+        <img src="https://static.wixstatic.com/media/e0bb63_4d5bae1532fc40fbbb64f83fbbb0cec4~mv2.jpg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/e0bb63_4d5bae1532fc40fbbb64f83fbbb0cec4~mv2.jpg" alt="HCGA 2026 Event 1 prizes" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+        <img src="https://static.wixstatic.com/media/187e4a_e3945f4f1943403891db7e390d19b7c4~mv2.jpeg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/187e4a_e3945f4f1943403891db7e390d19b7c4~mv2.jpeg" alt="HCGA 2026 Event 1 scene" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+        <img src="https://static.wixstatic.com/media/187e4a_96c98285db5e43c3b5065e9dc5e4952a~mv2.jpeg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/187e4a_96c98285db5e43c3b5065e9dc5e4952a~mv2.jpeg" alt="HCGA 2026 golf course" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+        <img src="https://static.wixstatic.com/media/187e4a_b30d9ed80ae149578cba3e7a04c52147~mv2.jpg/v1/fill/w_600,h_450,al_c,q_80,enc_auto/187e4a_b30d9ed80ae149578cba3e7a04c52147~mv2.jpg" alt="Golf course panorama" class="gallery-img w-full aspect-[4/3] object-cover rounded-lg" onclick="openLightbox(this)">
+      </div>
+    </div>
+  </section>
+
+  <!-- Videos Section -->
+  <section class="bg-navy-50 py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-navy-800 mb-4 border-b-4 border-gold-400 pb-2 inline-block">
+        <span data-lang="en">Video Highlights</span><span data-lang="zh">视频集锦</span>
+      </h2>
+      <p class="text-sm text-gray-500 mb-4" data-lang="en">By member Xingong Li (Fun Golf)</p>
+      <p class="text-sm text-gray-500 mb-4" data-lang="zh">会员 Xingong Li (Fun Golf) 拍摄</p>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/5ie2Qw8NnUY" title="HCGA 2026 0308" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/4qEhtMgxVNY" title="HCGA 2026 0322" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/9GLzRvJZFoA" title="HCGA 2025 Championship" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/Qebo7-QKSXI" title="HCGA 2025 0914" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/g7zPcE2Oi_c" title="Golf Friendship Houston 2024" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="flex items-center justify-center bg-navy-800 rounded-xl">
+          <a href="https://www.youtube.com/channel/UCRNvBbyQ48zJouuYEiAAo8w" target="_blank" rel="noopener" class="text-gold-400 font-bold text-sm hover:text-gold-300">
+            <span data-lang="en">▶ More on YouTube</span><span data-lang="zh">▶ 更多视频</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-navy-900 text-gray-400 py-6">
+    <div class="max-w-5xl mx-auto px-4 flex items-center justify-between text-xs">
+      <span>&copy; 2026 HCGA · 501(c)(3)</span>
+      <a href="index.html" class="hover:text-white"><span data-lang="en">Back to Home</span><span data-lang="zh">返回首页</span></a>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white text-3xl font-bold z-110">&times;</button>
+    <img id="lightbox-img" src="" alt="Full size photo">
+  </div>
+
+  <script>
+    let currentLang = 'en';
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      document.documentElement.lang = currentLang;
+      document.getElementById('lang-toggle').textContent = currentLang === 'en' ? 'EN / 中文' : '中文 / EN';
+    }
+    function openLightbox(img) {
+      const src = img.src.replace(/\/fill\/w_\d+,h_\d+/, '/fill/w_1600,h_1200');
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+</body>
+</html>
