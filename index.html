@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCGA - Houston Chinese Golf Association</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { 50: '#f0f4f8', 100: '#d9e2ec', 200: '#bcccdc', 400: '#627d98', 600: '#243b53', 700: '#1a2e44', 800: '#102a43', 900: '#0a1929' },
+            gold: { 50: '#fff9e6', 100: '#fff0b3', 300: '#ffd54f', 400: '#ffc107', 500: '#d4a017', 600: '#b8860b' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', 'Noto Sans SC', sans-serif; -webkit-font-smoothing: antialiased; }
+    [data-lang="zh"] { display: none; }
+    html[lang="zh"] [data-lang="en"] { display: none; }
+    html[lang="zh"] [data-lang="zh"] { display: block; }
+    html[lang="zh"] span[data-lang="zh"], html[lang="zh"] a[data-lang="zh"],
+    html[lang="zh"] td[data-lang="zh"], html[lang="zh"] th[data-lang="zh"],
+    html[lang="zh"] h1[data-lang="zh"], html[lang="zh"] h2[data-lang="zh"],
+    html[lang="zh"] h3[data-lang="zh"], html[lang="zh"] p[data-lang="zh"] { display: inline; }
+    html[lang="zh"] div[data-lang="zh"] { display: block; }
+    html[lang="zh"] span[data-lang="en"], html[lang="zh"] a[data-lang="en"],
+    html[lang="zh"] td[data-lang="en"], html[lang="zh"] th[data-lang="en"],
+    html[lang="zh"] h1[data-lang="en"], html[lang="zh"] h2[data-lang="en"],
+    html[lang="zh"] h3[data-lang="en"], html[lang="zh"] p[data-lang="en"] { display: none; }
+    html { scroll-behavior: smooth; }
+    #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+    #mobile-menu.open { max-height: 500px; }
+    .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .team-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .yr-tab.active { background: #102a43 !important; color: white !important; }
+    .year-panel.hidden { display: none; }
+    /* Accordion for team members */
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .acc-body.open { max-height: 200px; }
+    .acc-toggle { cursor: pointer; }
+    .acc-toggle .arrow { transition: transform 0.2s; display: inline-block; }
+    .acc-toggle.expanded .arrow { transform: rotate(90deg); }
+    /* Tighter spacing */
+    section { padding-top: 2rem; padding-bottom: 2rem; }
+    @media(min-width:768px) { section { padding-top: 2.5rem; padding-bottom: 2.5rem; } }
+    /* Photo slideshow */
+    .slideshow { position: relative; overflow: hidden; }
+    .slideshow img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s; }
+    .slideshow img.active { opacity: 1; position: relative; }
+    /* Ticker marquee */
+    .ticker-wrap { overflow: hidden; }
+    .ticker { animation: ticker-scroll 12s linear infinite; }
+    .ticker:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    @media (max-width: 640px) {
+      .result-row { flex-direction: column !important; align-items: flex-start !important; gap: 2px !important; }
+      .contact-row { flex-direction: column !important; align-items: flex-start !important; gap: 2px !important; }
+      .ticker { animation-duration: 10s; }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+
+  <!-- NAV — 深色顶栏 -->
+  <nav class="bg-navy-800 text-white sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
+      <a href="#" class="flex items-center gap-2">
+        <img src="https://static.wixstatic.com/media/e0bb63_fc76a093b6b948ac81c63dffc1f9ebb6~mv2.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/HCGA%20Logo_edited.png" alt="HCGA" class="w-10 h-10 rounded-full bg-white p-0.5">
+        <span class="font-bold text-base hidden sm:inline">HCGA</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-5 text-sm font-medium">
+        <a href="#about" class="hover:text-gold-400 transition">
+          <span data-lang="en">About</span><span data-lang="zh">关于</span>
+        </a>
+        <a href="#league" class="hover:text-gold-400 transition">
+          <span data-lang="en">Club League</span><span data-lang="zh">联赛</span>
+        </a>
+        <a href="#tournaments" class="hover:text-gold-400 transition">
+          <span data-lang="en">Tournaments</span><span data-lang="zh">赛事</span>
+        </a>
+        <a href="#gallery" class="hover:text-gold-400 transition">
+          <span data-lang="en">Gallery</span><span data-lang="zh">相册</span>
+        </a>
+        <a href="#charity" class="hover:text-gold-400 transition">
+          <span data-lang="en">Charity</span><span data-lang="zh">慈善</span>
+        </a>
+        <a href="#scholarship" class="hover:text-gold-400 transition">
+          <span data-lang="en">Scholarship</span><span data-lang="zh">奖学金</span>
+        </a>
+        <a href="#sponsors" class="hover:text-gold-400 transition">
+          <span data-lang="en">Sponsors</span><span data-lang="zh">赞助商</span>
+        </a>
+        <a href="#contact" class="hover:text-gold-400 transition">
+          <span data-lang="en">Contact</span><span data-lang="zh">联系</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="lang-toggle" onclick="toggleLang()" class="px-3 py-1 text-xs font-bold border border-gold-400 text-gold-400 rounded hover:bg-gold-400 hover:text-navy-800 transition">EN / 中文</button>
+        <button onclick="document.getElementById('mobile-menu').classList.toggle('open')" class="lg:hidden p-1.5">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="lg:hidden px-4 pb-3 space-y-2 text-sm border-t border-navy-700">
+      <a href="#about" class="block py-1.5 hover:text-gold-400" onclick="document.getElementById('mobile-menu').classList.remove('open')"><span data-lang="en">About</span><span data-lang="zh">关于</span></a>
+      <a href="#league" class="block py-1.5 hover:text-gold-400" onclick="document.getElementById('mobile-menu').classList.remove('open')"><span data-lang="en">Club League</span><span data-lang="zh">联赛</span></a>
+      <a href="#tournaments" class="block py-1.5 hover:text-gold-400" onclick="document.getElementById('mobile-menu').classList.remove('open')"><span data-lang="en">Tournaments</span><span data-lang="zh">赛事</span></a>
+      <a href="#gallery" class="block py-1.5 hover:text-gold-400" onclick="document.getElementById('mobile-menu').classList.remove('open')"><span data-lang="en">Gallery</span><span data-lang="zh">相册</span></a>
+      <a href="#charity" class="block py-1.5 hover:text-gold-400" onclick="document.getElementById('mobile-menu').classList.remove('open')"><span data-lang="en">Charity</span><span data-lang="zh">慈善</span></a>
+      <a href="#sponsors" class="block py-1.5 hover:text-gold-400" onclick="document.getElementById('mobile-menu').classList.remove('open')"><span data-lang="en">Sponsors</span><span data-lang="zh">赞助商</span></a>
+      <a href="#contact" class="block py-1.5 hover:text-gold-400" onclick="document.getElementById('mobile-menu').classList.remove('open')"><span data-lang="en">Contact</span><span data-lang="zh">联系</span></a>
+    </div>
+  </nav>
+
+  <!-- HERO — 大图+文字叠加 -->
+  <section class="relative bg-navy-900 text-white">
+    <div class="absolute inset-0">
+      <img src="https://static.wixstatic.com/media/187e4a_b30d9ed80ae149578cba3e7a04c52147~mv2.jpg/v1/fill/w_1600,h_700,al_c,q_80,enc_auto/golf%20courses_edited.jpg" alt="Golf course" class="w-full h-full object-cover opacity-40">
+    </div>
+    <div class="relative max-w-5xl mx-auto px-4 py-16 md:py-24 text-center">
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-3" data-lang="en">Houston Chinese Golf Association</h1>
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-3" data-lang="zh">休斯顿华人高尔夫协会</h1>
+      <p class="text-lg md:text-xl text-gray-200 mb-6 max-w-2xl mx-auto" data-lang="en">A 501(c)(3) non-profit bringing Houston golfers together through sport, community, and friendship.</p>
+      <p class="text-lg md:text-xl text-gray-200 mb-6 max-w-2xl mx-auto" data-lang="zh">501(c)(3) 非营利组织，以高尔夫运动凝聚社区友谊。</p>
+      <div class="flex justify-center gap-3 flex-wrap">
+        <a href="#league" class="px-6 py-2.5 bg-gold-400 text-navy-900 font-bold rounded-lg hover:bg-gold-300 transition text-sm">
+          <span data-lang="en">2026 Club League</span><span data-lang="zh">2026 俱乐部联赛</span>
+        </a>
+        <a href="#contact" class="px-6 py-2.5 border-2 border-white/50 rounded-lg hover:bg-white/10 transition text-sm font-medium">
+          <span data-lang="en">Contact Us</span><span data-lang="zh">联系我们</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 活动照片横幅 — object-position确保人头不被切 -->
+  <div class="grid grid-cols-3 gap-1">
+    <div class="aspect-[16/9] overflow-hidden"><img src="https://static.wixstatic.com/media/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg/v1/fill/w_800,h_500,al_c,q_80,enc_auto/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg" alt="HCGA group" class="w-full h-full object-cover object-top"></div>
+    <div class="aspect-[16/9] overflow-hidden"><img src="https://static.wixstatic.com/media/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg/v1/fill/w_800,h_500,al_c,q_80,enc_auto/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg" alt="HCGA tournament" class="w-full h-full object-cover object-center"></div>
+    <div class="aspect-[16/9] overflow-hidden"><img src="https://static.wixstatic.com/media/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg/v1/fill/w_800,h_500,al_c,q_80,enc_auto/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg" alt="HCGA event" class="w-full h-full object-cover object-top"></div>
+  </div>
+
+  <!-- ABOUT — 紧凑三栏 -->
+  <section id="about" class="py-10 md:py-14 bg-navy-50">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-navy-800 mb-6 text-center border-b-4 border-gold-400 pb-2 inline-block mx-auto w-full text-center">
+        <span data-lang="en">About HCGA</span><span data-lang="zh">关于 HCGA</span>
+      </h2>
+      <div class="grid md:grid-cols-3 gap-6 mt-6">
+        <div class="bg-white rounded-xl p-5 shadow-sm border-t-4 border-gold-400">
+          <h3 class="font-bold text-navy-800 text-lg mb-2" data-lang="en">Our Mission</h3>
+          <h3 class="font-bold text-navy-800 text-lg mb-2" data-lang="zh">使命</h3>
+          <p class="text-gray-600 text-sm leading-relaxed" data-lang="en">Promote learning and improving the game of golf, building strong relationships among golfers of varying backgrounds and skill levels.</p>
+          <p class="text-gray-600 text-sm leading-relaxed" data-lang="zh">推动高尔夫运动学习与提升，在不同背景和水平的球友之间建立深厚友谊。</p>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow-sm border-t-4 border-gold-400">
+          <h3 class="font-bold text-navy-800 text-lg mb-2" data-lang="en">Our Vision</h3>
+          <h3 class="font-bold text-navy-800 text-lg mb-2" data-lang="zh">愿景</h3>
+          <p class="text-gray-600 text-sm leading-relaxed" data-lang="en">Motivate individuals and families to be involved in community commonweal through organized activities and daily influences.</p>
+          <p class="text-gray-600 text-sm leading-relaxed" data-lang="zh">激励个人与家庭通过有组织的活动和日常交流，积极投入社区公益事业。</p>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow-sm border-t-4 border-gold-400">
+          <h3 class="font-bold text-navy-800 text-lg mb-2" data-lang="en">Our Action</h3>
+          <h3 class="font-bold text-navy-800 text-lg mb-2" data-lang="zh">行动</h3>
+          <p class="text-gray-600 text-sm leading-relaxed" data-lang="en">Schedule outings and tournaments to promote emotional and financial help for children's education, senior care, and charities.</p>
+          <p class="text-gray-600 text-sm leading-relaxed" data-lang="zh">组织球赛与联谊活动，为社区儿童教育、老年关爱及公益组织提供支持。</p>
+        </div>
+      </div>
+      <!-- Values 横排 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+        <div class="bg-white rounded-lg p-3 text-center shadow-sm"><p class="font-bold text-navy-800 text-sm" data-lang="en">Take Ownership</p><p class="font-bold text-navy-800 text-sm" data-lang="zh">敢于担当</p><p class="text-xs text-gray-400 mt-1" data-lang="en">Deliver on promises</p><p class="text-xs text-gray-400 mt-1" data-lang="zh">兑现承诺</p></div>
+        <div class="bg-white rounded-lg p-3 text-center shadow-sm"><p class="font-bold text-navy-800 text-sm" data-lang="en">Exercise Care</p><p class="font-bold text-navy-800 text-sm" data-lang="zh">心怀关爱</p><p class="text-xs text-gray-400 mt-1" data-lang="en">Compassion for all</p><p class="text-xs text-gray-400 mt-1" data-lang="zh">以同理心帮助他人</p></div>
+        <div class="bg-white rounded-lg p-3 text-center shadow-sm"><p class="font-bold text-navy-800 text-sm" data-lang="en">Go Beyond</p><p class="font-bold text-navy-800 text-sm" data-lang="zh">超越自我</p><p class="text-xs text-gray-400 mt-1" data-lang="en">Impact communities</p><p class="text-xs text-gray-400 mt-1" data-lang="zh">惠及更多人群</p></div>
+        <div class="bg-white rounded-lg p-3 text-center shadow-sm"><p class="font-bold text-navy-800 text-sm" data-lang="en">Win Together</p><p class="font-bold text-navy-800 text-sm" data-lang="zh">共赢共进</p><p class="text-xs text-gray-400 mt-1" data-lang="en">Share success</p><p class="text-xs text-gray-400 mt-1" data-lang="zh">分享情感与成功</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE TICKER — 跑马灯积分 两行 -->
+  <div class="bg-navy-800 overflow-hidden py-1.5 relative">
+    <div class="flex items-center">
+      <span class="bg-gold-400 text-navy-900 font-black text-[10px] px-2.5 py-3 rounded-r-lg shrink-0 z-10 uppercase tracking-wider leading-none">L<br>I<br>V<br>E</span>
+      <div class="ml-2 overflow-hidden flex-1 space-y-0.5">
+        <!-- Row 1: Teams -->
+        <div class="ticker-wrap overflow-hidden">
+          <div class="ticker flex gap-6 whitespace-nowrap text-xs text-white font-medium">
+            <span>🏆 <strong class="text-gold-300">Fortune Stars 福星队</strong> <span class="bg-gold-500/20 text-gold-300 px-1.5 py-0.5 rounded font-black">4</span></span>
+            <span class="text-gray-600">·</span>
+            <span>GreatWood 巨木联队 <span class="text-gray-500">0</span></span>
+            <span class="text-gray-600">·</span>
+            <span>WillowFork 柳叉队 <span class="text-gray-500">0</span></span>
+            <span class="text-gray-600">·</span>
+            <span>FalconPoint 猎鹰队 <span class="text-gray-500">0</span></span>
+            <span class="text-gray-600">·</span>
+            <span>WindRose 北斗星队 <span class="text-gray-500">0</span></span>
+            <span class="text-gray-600">·</span>
+            <span>BlackHawk 黑鹰队 <span class="text-gray-500">0</span></span>
+            <span class="text-gray-600 mx-4">★</span>
+            <span>🏆 <strong class="text-gold-300">Fortune Stars 福星队</strong> <span class="bg-gold-500/20 text-gold-300 px-1.5 py-0.5 rounded font-black">4</span></span>
+            <span class="text-gray-600">·</span>
+            <span>GreatWood 0 · WillowFork 0 · FalconPoint 0 · WindRose 0 · BlackHawk 0</span>
+          </div>
+        </div>
+        <!-- Row 2: Players -->
+        <div class="ticker-wrap overflow-hidden">
+          <div class="ticker flex gap-6 whitespace-nowrap text-xs text-gray-300" style="animation-direction: reverse;">
+            <span>👤 Maggie Sun <span class="text-gold-300 font-bold">2</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 Kathy Zhang <span class="text-gold-300 font-bold">2</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 Sally Xia <span class="text-gold-300 font-bold">1</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 李良根 <span class="text-gold-300 font-bold">1</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 沈忠良 <span class="text-gold-300 font-bold">1</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 Alex Wu <span class="text-gold-300 font-bold">1</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 毛有力 <span class="text-gray-400">1</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 程建国 <span class="text-gray-400">1</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 袁瑾 <span class="text-gray-400">1</span></span>
+            <span class="text-gray-600">·</span>
+            <span>👤 Ali <span class="text-gray-400">1</span></span>
+            <span class="text-gray-600 mx-4">📅 Next: Event #2 TBD</span>
+            <span>👤 Maggie Sun 2 · Kathy Zhang 2 · Sally Xia 1 · 李良根 1 · 沈忠良 1 · Alex Wu 1 · 毛有力 1 · 程建国 1 · 袁瑾 1 · Ali 1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLUB LEAGUE — 6队紧凑展示 -->
+  <section id="league" class="py-10 md:py-14">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-navy-800 mb-2 text-center">
+        <span data-lang="en">2026 Club League</span><span data-lang="zh">2026 俱乐部联赛</span>
+      </h2>
+      <p class="text-center text-gray-500 text-sm mb-2" data-lang="en">Six teams · Year-long points system · Hosted by Lianggen Li</p>
+      <p class="text-center text-gray-500 text-sm mb-2" data-lang="zh">六支队伍 · 年度积分赛制 · 李良根主持</p>
+      <div class="text-center mb-6">
+        <a href="scores.html" class="inline-block px-5 py-2 bg-navy-800 text-gold-400 font-bold rounded-lg hover:bg-navy-700 transition text-sm">
+          <span data-lang="en">View League Scores →</span><span data-lang="zh">查看联赛成绩 →</span>
+        </a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-3">
+        <div class="team-card bg-white rounded-xl shadow-sm border-l-4 border-red-500">
+          <div class="acc-toggle p-3 flex justify-between items-center" onclick="toggleAcc(this)">
+            <div><h4 class="font-bold text-base">Fortune Stars <span class="text-gray-400 font-normal text-sm">福星队</span></h4><p class="text-xs text-gray-400">Magnolia Creek GC · <span class="text-red-500 font-semibold"><span data-lang="en">Capt:</span><span data-lang="zh">队长:</span> 李良根</span> · 11人</p></div>
+            <span class="arrow text-gray-300">▶</span>
+          </div>
+          <div class="acc-body"><p class="text-xs text-gray-500 px-3 pb-3">Sally Xia, Maggie Sun, Kathy Zhang, May, Helen Cho, Vincent Zhong, Alex Wu, Honglu Wu, 罗辉, 沈忠良</p></div>
+        </div>
+        <div class="team-card bg-white rounded-xl shadow-sm border-l-4 border-green-600">
+          <div class="acc-toggle p-3 flex justify-between items-center" onclick="toggleAcc(this)">
+            <div><h4 class="font-bold text-base">WillowFork <span class="text-gray-400 font-normal text-sm">柳叉队</span></h4><p class="text-xs text-gray-400">Willow Fork CC · <span class="text-green-600 font-semibold"><span data-lang="en">Capt:</span><span data-lang="zh">队长:</span> 朱捷</span> · 12人</p></div>
+            <span class="arrow text-gray-300">▶</span>
+          </div>
+          <div class="acc-body"><p class="text-xs text-gray-500 px-3 pb-3">毛有力, 宗国华, 程建国, James Yeh, 刘再峰, Nathan Lu, 朱武, 龚炳年, 王岩, 刘志洪, Josh Xu</p></div>
+        </div>
+        <div class="team-card bg-white rounded-xl shadow-sm border-l-4 border-amber-500">
+          <div class="acc-toggle p-3 flex justify-between items-center" onclick="toggleAcc(this)">
+            <div><h4 class="font-bold text-base">GreatWood <span class="text-gray-400 font-normal text-sm">巨木联队</span></h4><p class="text-xs text-gray-400">Greatwood GC · <span class="text-amber-600 font-semibold"><span data-lang="en">Capt:</span><span data-lang="zh">队长:</span> James Wu</span> · 9人</p></div>
+            <span class="arrow text-gray-300">▶</span>
+          </div>
+          <div class="acc-body"><p class="text-xs text-gray-500 px-3 pb-3">田翔, Frank, 袁瑾, 罗琪Jeff, Ali, John John, 冯暴, 刘劲</p></div>
+        </div>
+        <div class="team-card bg-white rounded-xl shadow-sm border-l-4 border-blue-600">
+          <div class="acc-toggle p-3 flex justify-between items-center" onclick="toggleAcc(this)">
+            <div><h4 class="font-bold text-base">FalconPoint <span class="text-gray-400 font-normal text-sm">猎鹰队</span></h4><p class="text-xs text-gray-400">Falcon Point · <span class="text-blue-600 font-semibold"><span data-lang="en">Capt:</span><span data-lang="zh">队长:</span> 谭鹏</span> · 10人</p></div>
+            <span class="arrow text-gray-300">▶</span>
+          </div>
+          <div class="acc-body"><p class="text-xs text-gray-500 px-3 pb-3">何明波, 丁瑞东, James Li, 王勇, 董殿生, Xinyuan Li, Mark Yue, Robin Luo, Anna Wang</p></div>
+        </div>
+        <div class="team-card bg-white rounded-xl shadow-sm border-l-4 border-purple-600">
+          <div class="acc-toggle p-3 flex justify-between items-center" onclick="toggleAcc(this)">
+            <div><h4 class="font-bold text-base">WindRose <span class="text-gray-400 font-normal text-sm">北斗星队</span></h4><p class="text-xs text-gray-400">Hearthstone CC · <span class="text-purple-600 font-semibold"><span data-lang="en">Capt:</span><span data-lang="zh">队长:</span> 王建荣</span> · 13人</p></div>
+            <span class="arrow text-gray-300">▶</span>
+          </div>
+          <div class="acc-body"><p class="text-xs text-gray-500 px-3 pb-3">冯平, 吕强, 张新胜, 唐守安, 大牛, Jason, 王铁君, Wujun, Xingong, Jim, 凌奇, 老俞</p></div>
+        </div>
+        <div class="team-card bg-white rounded-xl shadow-sm border-l-4 border-gray-800">
+          <div class="acc-toggle p-3 flex justify-between items-center" onclick="toggleAcc(this)">
+            <div><h4 class="font-bold text-base">BlackHawk <span class="text-gray-400 font-normal text-sm">黑鹰队</span></h4><p class="text-xs text-gray-400">Blackhawk CC · <span class="text-gray-800 font-semibold"><span data-lang="en">Capt:</span><span data-lang="zh">队长:</span> Ben Duan</span> · 9人</p></div>
+            <span class="arrow text-gray-300">▶</span>
+          </div>
+          <div class="acc-body"><p class="text-xs text-gray-500 px-3 pb-3">Cong Zhao, Nathan Huang, James Li, Chi Zhang, Henry Zhu, Jason Chen, Victor Sun, Henry Ren</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOURNAMENTS — 2022-2026 切换 -->
+  <section id="tournaments" class="py-10 md:py-14 bg-navy-50">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-navy-800 mb-4 text-center">
+        <span data-lang="en">Tournaments</span><span data-lang="zh">历届赛事</span>
+      </h2>
+      <div class="flex justify-center gap-1.5 mb-6 flex-wrap">
+        <button class="yr-tab active px-4 py-1.5 text-sm font-bold rounded-lg bg-navy-800 text-white" onclick="showYear(2026,this)">2026</button>
+        <button class="yr-tab px-4 py-1.5 text-sm font-medium rounded-lg bg-gray-200 text-gray-600" onclick="showYear(2025,this)">2025</button>
+        <button class="yr-tab px-4 py-1.5 text-sm font-medium rounded-lg bg-gray-200 text-gray-600" onclick="showYear(2024,this)">2024</button>
+        <button class="yr-tab px-4 py-1.5 text-sm font-medium rounded-lg bg-gray-200 text-gray-600" onclick="showYear(2023,this)">2023</button>
+        <button class="yr-tab px-4 py-1.5 text-sm font-medium rounded-lg bg-gray-200 text-gray-600" onclick="showYear(2022,this)">2022</button>
+      </div>
+
+      <!-- 2026 -->
+      <div class="year-panel" data-year="2026">
+        <!-- Photo slideshow for Event #1 — from original site -->
+        <div class="slideshow rounded-xl overflow-hidden mb-3 aspect-[21/9]">
+          <img src="https://static.wixstatic.com/media/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg/v1/fill/w_1200,h_500,al_c,q_80,enc_auto/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg" alt="Event 1 group photo" class="active">
+          <img src="https://static.wixstatic.com/media/187e4a_deb823567e15413e90febb417c4305c3~mv2.jpeg/v1/fill/w_1200,h_500,al_c,q_80,enc_auto/187e4a_deb823567e15413e90febb417c4305c3~mv2.jpeg" alt="Event 1 tournament">
+          <img src="https://static.wixstatic.com/media/e0bb63_4d5bae1532fc40fbbb64f83fbbb0cec4~mv2.jpg/v1/fill/w_1200,h_500,al_c,q_80,enc_auto/e0bb63_4d5bae1532fc40fbbb64f83fbbb0cec4~mv2.jpg" alt="Event 1 awards">
+          <img src="https://static.wixstatic.com/media/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg/v1/fill/w_1200,h_500,al_c,q_80,enc_auto/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg" alt="Event 1 scene">
+          <img src="https://static.wixstatic.com/media/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg/v1/fill/w_1200,h_500,al_c,q_80,enc_auto/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg" alt="Event 1 celebration">
+        </div>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-navy-800 text-white px-5 py-3">
+            <h3 class="font-bold" data-lang="en">Event #1: Galloping Horses Season Opener</h3>
+            <h3 class="font-bold" data-lang="zh">第一场：万马奔腾开年赛</h3>
+            <p class="text-sm text-gray-300 mt-0.5">March 22, 2026 · Northgate Country Club</p>
+          </div>
+          <div class="divide-y">
+            <div class="px-5 py-2.5 flex justify-between items-center result-row"><span class="text-sm">🥇 <span data-lang="en">Gross Champion</span><span data-lang="zh">总杆冠军</span></span><span class="font-bold text-sm">Mingbo He <span class="text-gold-600">79</span></span></div>
+            <div class="px-5 py-2.5 flex justify-between items-center result-row"><span class="text-sm">🥈 <span data-lang="en">Gross 2nd</span><span data-lang="zh">总杆亚军</span></span><span class="font-bold text-sm">James Yeh, Sally Xia <span class="text-gray-400">85</span></span></div>
+            <div class="px-5 py-2.5 flex justify-between items-center result-row"><span class="text-sm">🏅 <span data-lang="en">Net Champion</span><span data-lang="zh">净杆冠军</span></span><span class="font-bold text-sm">冯平, Ben Duan</span></div>
+            <div class="px-5 py-2.5 flex justify-between items-center result-row"><span class="text-sm">🏅 <span data-lang="en">Net 3rd</span><span data-lang="zh">净杆季军</span></span><span class="font-bold text-sm">James Wu</span></div>
+            <div class="px-5 py-2.5 flex justify-between items-center result-row"><span class="text-sm"><span data-lang="en">Longest Drive #5 (M/W)</span><span data-lang="zh">最远开球#5</span></span><span class="font-medium text-sm">Ben Duan / Maggie Sun</span></div>
+            <div class="px-5 py-2.5 flex justify-between items-center result-row"><span class="text-sm"><span data-lang="en">Closest to Pin #8</span><span data-lang="zh">最近旗杆#8</span></span><span class="font-medium text-sm">罗琪</span></div>
+            <div class="px-5 py-2.5 flex justify-between items-center result-row"><span class="text-sm"><span data-lang="en">Special Award</span><span data-lang="zh">特别奖</span></span><span class="font-medium text-sm">Eric Li</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2025 -->
+      <div class="year-panel hidden" data-year="2025">
+        <div class="grid md:grid-cols-2 gap-2">
+          <div class="bg-white rounded-lg p-3 shadow-sm"><p class="font-bold text-sm">Valentine Day 二人组队赛</p><p class="text-xs text-gray-400">Feb 14 · Sugar Creek CC · 20人 · Scramble</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">女神节 三地联赛</p><p class="text-xs text-gray-400">Mar 7 · Hearthstone CC · Austin/Dallas/Houston Ladies</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">HCGA Crawfish Tournament</p><p class="text-xs text-gray-400">Apr 19 · Wilderness GC · 40人 · Dinner @Bastrop Ranch</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Legend Cup 南北大战</p><p class="text-xs text-gray-400">May · Willow Fork CC · 南队 Frank Lu vs 北队 Frank Fan</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">会员专属 Tournament</p><p class="text-xs text-gray-400">Sep 13 · Wildcat GC · 32-40人 · Member</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">德州三地高手对抗赛</p><p class="text-xs text-gray-400">Oct · Golf Club of Houston · 48-60人 · 2 courses</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-red-500"><p class="font-bold text-sm">HEB Open Tournament</p><p class="text-xs text-gray-400">Nov 15 · Golf Club of Houston · 60+人 · Trophies</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-gold-400"><p class="font-bold text-sm">HCGA Championship</p><p class="text-xs text-gray-400">Dec 20 · Black Hawk / Sugar Creek CC · 40人</p></div>
+        </div>
+      </div>
+
+      <!-- 2024 -->
+      <div class="year-panel hidden" data-year="2024">
+        <div class="grid md:grid-cols-2 gap-3">
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">HCGA Open</p><p class="text-xs text-gray-400">Feb 3 · Wildcat GC · 60人 · Individual</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">GAGA vs HCGA Match Play</p><p class="text-xs text-gray-400">Mar 2 · Moody Garden GC · Austin vs Houston · 53人</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Ladies Annual Tournament</p><p class="text-xs text-gray-400">Mar 14 · Sterling CC · 16人</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Ranch Sunset Tournament</p><p class="text-xs text-gray-400">Apr 6 · Wilderness GC · 34人 · Shot Gun</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Legend Cup Tournament</p><p class="text-xs text-gray-400">May 4 · Golf Club of Houston</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Charity Event</p><p class="text-xs text-gray-400">May · Meadowbrook Farms GC · Scholarship begins</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-red-500"><p class="font-bold text-sm">HEB Open Tournament</p><p class="text-xs text-gray-400">Nov 10 · Golf Club of Houston · 80+人</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-gold-400"><p class="font-bold text-sm">HCGA Championship</p><p class="text-xs text-gray-400">Dec · 40-60人 · Trophies & Prizes</p></div>
+        </div>
+      </div>
+
+      <!-- 2023 -->
+      <div class="year-panel hidden" data-year="2023">
+        <div class="grid md:grid-cols-2 gap-3">
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">HCGA Open</p><p class="text-xs text-gray-400">Feb 11 · Cypress Lake GC · 60人</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">HCGA Open</p><p class="text-xs text-gray-400">Mar 27 · Willow Fork GC</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">North-South Challenge</p><p class="text-xs text-gray-400">Apr · Clear Creek GC</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Volunteer Appreciation</p><p class="text-xs text-gray-400">May 20 · Quail Valley GC · Free</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Family Team Scramble</p><p class="text-xs text-gray-400">Jun · Quail Valley GC · Member</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">HCGA Charity Open</p><p class="text-xs text-gray-400">Jul · Houston National GC</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Scholarship Houston Open</p><p class="text-xs text-gray-400">Nov 12 · Quail Valley GC</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm border-l-4 border-gold-400"><p class="font-bold text-sm">Year-end Gala</p><p class="text-xs text-gray-400">Dec · Annual Celebration</p></div>
+        </div>
+      </div>
+
+      <!-- 2022 -->
+      <div class="year-panel hidden" data-year="2022">
+        <div class="grid md:grid-cols-2 gap-3">
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Chinese New Year Open</p><p class="text-xs text-gray-400">Jan 22 · Cypress Lakes GC · 60人</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">AID & HCGA Charity</p><p class="text-xs text-gray-400">Feb 19 · Quail Valley GC · 45人 · Houston Food Bank</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">HCGA Open</p><p class="text-xs text-gray-400">Mar 26 · Clear Creek GC · 44人</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Match Play 南北大战</p><p class="text-xs text-gray-400">May 28 · Katy vs Sugar Land</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Member Tournament</p><p class="text-xs text-gray-400">Jun 25 · Sweetwater GC</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Member Tournament</p><p class="text-xs text-gray-400">Sep 17 · Northgate CC</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">HCGA Open</p><p class="text-xs text-gray-400">Oct 27 · Golf Club of Houston</p></div>
+          <div class="bg-white rounded-lg p-4 shadow-sm"><p class="font-bold text-sm">Annual Open + Gala</p><p class="text-xs text-gray-400">Nov-Dec · 72-108人</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY — YouTube视频 -->
+  <section id="gallery" class="py-10 md:py-14">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-bold text-navy-800 mb-4 text-center">
+        <span data-lang="en">Event Gallery</span><span data-lang="zh">活动相册</span>
+      </h2>
+      <p class="text-center text-gray-500 text-sm mb-6" data-lang="en">Video highlights by member Xingong Li</p>
+      <p class="text-center text-gray-500 text-sm mb-6" data-lang="zh">会员 Xingong Li 精彩视频集锦</p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/videoseries?list=PLxSomePlaylist" title="HCGA 2026 Northgate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <img src="https://static.wixstatic.com/media/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg/v1/fill/w_400,h_300,al_c,q_80,enc_auto/187e4a_522221120efb46008335dff3566a6fa8~mv2.jpeg" alt="HCGA" class="w-full h-full object-cover rounded-lg">
+          <img src="https://static.wixstatic.com/media/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg/v1/fill/w_400,h_300,al_c,q_80,enc_auto/187e4a_e1700b629ecf429bb0f39a5e01151d87~mv2.jpeg" alt="HCGA" class="w-full h-full object-cover rounded-lg">
+          <img src="https://static.wixstatic.com/media/187e4a_b30d9ed80ae149578cba3e7a04c52147~mv2.jpg/v1/fill/w_400,h_300,al_c,q_80,enc_auto/golf%20courses_edited.jpg" alt="Golf" class="w-full h-full object-cover rounded-lg">
+          <img src="https://static.wixstatic.com/media/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg/v1/fill/w_400,h_300,al_c,q_80,enc_auto/187e4a_fa07748894ce4bd38240cce697b3172d~mv2.jpeg" alt="HCGA" class="w-full h-full object-cover rounded-lg">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM — 独立横条 -->
+  <section class="bg-navy-800 py-4">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-center">
+      <p class="text-white font-medium text-sm">
+        📷 <span data-lang="en">Follow us on Instagram</span><span data-lang="zh">关注我们的 Instagram</span>
+      </p>
+      <a href="https://www.instagram.com/hcga2025/" target="_blank" rel="noopener" class="px-5 py-2 bg-gold-400 text-navy-900 font-bold rounded-lg text-sm hover:bg-gold-300 transition">@HCGA2025</a>
+    </div>
+  </section>
+
+  <!-- CHARITY + SCHOLARSHIP — 并排 -->
+  <section id="charity" class="py-10 md:py-14 bg-navy-50">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Charity -->
+        <div class="bg-white rounded-xl p-5 shadow-sm">
+          <h2 class="text-xl font-bold text-navy-800 mb-3 border-b-2 border-gold-400 pb-1">
+            <span data-lang="en">Charity Events</span><span data-lang="zh">慈善活动</span>
+          </h2>
+          <p class="text-sm text-gray-600 leading-relaxed mb-3" data-lang="en">HCGA and L.E.A.S.H co-hosted a charity event at Meadowbrook Farms Golf Club. HCGA members Jim Yu (President), Mingbo He, and others volunteered as instructors for 20+ participants.</p>
+          <p class="text-sm text-gray-600 leading-relaxed mb-3" data-lang="zh">HCGA 与 L.E.A.S.H 在 Meadowbrook Farms 联合举办慈善活动。HCGA 会长 Jim Yu、Mingbo He 等多位会员担任教练，超过20人参与。</p>
+          <div class="bg-green-50 rounded-lg p-3 flex items-center gap-3">
+            <span class="text-2xl">💚</span>
+            <div>
+              <p class="font-bold text-green-700 text-lg">$1,500</p>
+              <p class="text-xs text-gray-500" data-lang="en">Donated to Camp Hope for veterans' PTSD treatment</p>
+              <p class="text-xs text-gray-500" data-lang="zh">捐赠给 Camp Hope 用于退伍军人 PTSD 治疗</p>
+            </div>
+          </div>
+        </div>
+        <!-- Scholarship -->
+        <div id="scholarship" class="bg-white rounded-xl p-5 shadow-sm">
+          <h2 class="text-xl font-bold text-navy-800 mb-3 border-b-2 border-gold-400 pb-1">
+            <span data-lang="en">Scholarship Fund</span><span data-lang="zh">奖学金计划</span>
+          </h2>
+          <p class="text-sm text-gray-600 leading-relaxed mb-3" data-lang="en">HCGA Scholarship Fund empowers minority youths from diverse backgrounds in their pursuit of academic excellence, career training, and community contributions.</p>
+          <p class="text-sm text-gray-600 leading-relaxed mb-3" data-lang="zh">HCGA 奖学金赋能不同背景的少数族裔青年，助力学术卓越与社区贡献。</p>
+          <div class="bg-gold-50 rounded-lg p-3">
+            <p class="text-xs text-gray-500 mb-1" data-lang="en">Available to</p>
+            <p class="text-xs text-gray-500 mb-1" data-lang="zh">面向对象</p>
+            <p class="font-bold text-navy-800 text-sm" data-lang="en">High School Juniors & Seniors — Greater Houston Area</p>
+            <p class="font-bold text-navy-800 text-sm" data-lang="zh">大休斯顿地区高中 11-12 年级学生</p>
+          </div>
+          <p class="text-xs text-gray-400 mt-3" data-lang="en">Primary sponsor: <span class="font-bold text-red-600">HEB</span></p>
+          <p class="text-xs text-gray-400 mt-3" data-lang="zh">主要赞助商：<span class="font-bold text-red-600">HEB</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPONSORS -->
+  <section id="sponsors" class="py-10 md:py-14">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-navy-800 mb-4 text-center">
+        <span data-lang="en">Sponsors</span><span data-lang="zh">赞助商</span>
+      </h2>
+      <div class="text-center mb-4">
+        <p class="text-xs text-gray-400 uppercase tracking-wider mb-2" data-lang="en">Primary Sponsor</p>
+        <p class="text-xs text-gray-400 uppercase tracking-wider mb-2" data-lang="zh">主要赞助商</p>
+        <span class="text-3xl font-black text-red-600">H-E-B</span>
+      </div>
+      <p class="text-xs text-gray-400 uppercase tracking-wider mb-3 text-center" data-lang="en">Previous Sponsors & Partners</p>
+      <p class="text-xs text-gray-400 uppercase tracking-wider mb-3 text-center" data-lang="zh">历届赞助商</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-20 border"><img src="https://static.wixstatic.com/media/e0bb63_d5a0465844a14f1f8526de871fc4922a~mv2.jpg/v1/fill/w_280,h_100,al_c,q_80,enc_auto/Kang.jpg" alt="Merrill Lynch" class="max-h-14 object-contain"></div>
+        <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-20 border"><img src="https://static.wixstatic.com/media/e0bb63_bcb3199250794eb7947a9cc0f6595f59~mv2.png/v1/fill/w_240,h_80,al_c,q_85,enc_auto/Pegasus_Vertex.png" alt="PVI" class="max-h-14 object-contain"></div>
+        <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-20 border"><img src="https://static.wixstatic.com/media/e0bb63_eef1248cfc184d9aa14f7c9b8debf442~mv2.jpg/v1/fill/w_400,h_220,al_c,q_80,enc_auto/Yangwq1.jpg" alt="WFG" class="max-h-14 object-contain"></div>
+        <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-20 border"><img src="https://static.wixstatic.com/media/e0bb63_f3d801d7586749f5ba46f9ed8fd71ec0~mv2.jpg/v1/fill/w_400,h_120,al_c,q_80,enc_auto/e0bb63_f3d801d7586749f5ba46f9ed8fd71ec0~mv2.jpg" alt="Sponsor" class="max-h-14 object-contain"></div>
+      </div>
+      <p class="text-center text-xs text-gray-400 mt-4" data-lang="en">Interested in sponsoring? <a href="#contact" class="text-navy-800 underline font-medium">Contact us</a></p>
+      <p class="text-center text-xs text-gray-400 mt-4" data-lang="zh">有意赞助？<a href="#contact" class="text-navy-800 underline font-medium">联系我们</a></p>
+    </div>
+  </section>
+
+  <!-- CONTACT — 简洁表格 -->
+  <section id="contact" class="py-10 md:py-14 bg-navy-800 text-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-4 text-center text-gold-400">
+        <span data-lang="en">Board of Directors</span><span data-lang="zh">理事会</span>
+      </h2>
+      <div class="bg-navy-700 rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-navy-900 text-gold-400"><th class="text-left px-4 py-2.5 font-semibold"><span data-lang="en">Role</span><span data-lang="zh">职务</span></th><th class="text-left px-4 py-2.5 font-semibold"><span data-lang="en">Name</span><span data-lang="zh">姓名</span></th><th class="text-left px-4 py-2.5 font-semibold hidden sm:table-cell">Email</th></tr></thead>
+          <tbody class="divide-y divide-navy-600">
+            <tr><td class="px-4 py-2.5"><span data-lang="en">President</span><span data-lang="zh">会长</span></td><td class="px-4 py-2.5 font-medium">Anna Wang</td><td class="px-4 py-2.5 text-gold-300 hidden sm:table-cell">wxlanna@gmail.com</td></tr>
+            <tr><td class="px-4 py-2.5"><span data-lang="en">Secretary</span><span data-lang="zh">秘书长</span></td><td class="px-4 py-2.5 font-medium">Jim Yu</td><td class="px-4 py-2.5 text-gold-300 hidden sm:table-cell">zhuoming_98@yahoo.com</td></tr>
+            <tr><td class="px-4 py-2.5"><span data-lang="en">Website</span><span data-lang="zh">网站</span></td><td class="px-4 py-2.5 font-medium">Alex Wu</td><td class="px-4 py-2.5 text-gold-300 hidden sm:table-cell">alexhxwu@gmail.com</td></tr>
+            <tr><td class="px-4 py-2.5"><span data-lang="en">PR Director</span><span data-lang="zh">公关</span></td><td class="px-4 py-2.5 font-medium">Tom Ren</td><td class="px-4 py-2.5 text-gold-300 hidden sm:table-cell">tom@GlobalXLR.com</td></tr>
+            <tr><td class="px-4 py-2.5"><span data-lang="en">Honor Director</span><span data-lang="zh">荣誉理事</span></td><td class="px-4 py-2.5 font-medium">Rocky Wang</td><td class="px-4 py-2.5 text-gold-300 hidden sm:table-cell">wuji2000@yahoo.com</td></tr>
+            <tr><td class="px-4 py-2.5"><span data-lang="en">Treasurer</span><span data-lang="zh">财务</span></td><td class="px-4 py-2.5 font-medium">Nathan Lu</td><td class="px-4 py-2.5 text-gold-300 hidden sm:table-cell">nathan.y.lu@gmail.com</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-center text-sm text-gray-400 mt-3">
+        <span data-lang="en">Event Committee:</span><span data-lang="zh">赛事委员会：</span>
+        Zaifeng Liu, Maggie Sun, James Ye, Frank Lu
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-navy-900 text-gray-400 py-6">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2">
+        <img src="https://static.wixstatic.com/media/e0bb63_fc76a093b6b948ac81c63dffc1f9ebb6~mv2.png/v1/fill/w_60,h_60,al_c,q_85,enc_auto/HCGA%20Logo_edited.png" alt="HCGA" class="w-6 h-6 rounded-full">
+        <span>&copy; 2026 HCGA · 501(c)(3)</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="#about" class="hover:text-white"><span data-lang="en">About</span><span data-lang="zh">关于</span></a>
+        <a href="#league" class="hover:text-white"><span data-lang="en">League</span><span data-lang="zh">联赛</span></a>
+        <a href="#tournaments" class="hover:text-white"><span data-lang="en">Tournaments</span><span data-lang="zh">赛事</span></a>
+        <a href="#contact" class="hover:text-white"><span data-lang="en">Contact</span><span data-lang="zh">联系</span></a>
+        <a href="https://www.instagram.com/hcga2025/" target="_blank" rel="noopener" class="text-gold-400 font-bold hover:text-gold-300">📷 @HCGA2025</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let currentLang = 'en';
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      document.documentElement.lang = currentLang;
+      document.getElementById('lang-toggle').textContent = currentLang === 'en' ? 'EN / 中文' : '中文 / EN';
+    }
+    function showYear(year, btn) {
+      document.querySelectorAll('.year-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelector('.year-panel[data-year="' + year + '"]').classList.remove('hidden');
+      document.querySelectorAll('.yr-tab').forEach(b => { b.classList.remove('active'); b.className = b.className.replace('bg-navy-800 text-white', 'bg-gray-200 text-gray-600'); });
+      btn.classList.add('active');
+    }
+
+    // Accordion toggle for team cards and tournament items
+    function toggleAcc(el) {
+      const body = el.nextElementSibling;
+      body.classList.toggle('open');
+      el.classList.toggle('expanded');
+    }
+
+    // Auto slideshow for event photos
+    (function() {
+      const shows = document.querySelectorAll('.slideshow');
+      shows.forEach(show => {
+        const imgs = show.querySelectorAll('img');
+        if (imgs.length < 2) return;
+        let idx = 0;
+        setInterval(() => {
+          imgs[idx].classList.remove('active');
+          idx = (idx + 1) % imgs.length;
+          imgs[idx].classList.add('active');
+        }, 3500);
+      });
+    })();
+  </script>
+</body>
+</html>

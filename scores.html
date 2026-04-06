@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Club League Scores - HCGA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: { 50: '#FFFDF9', 100: '#FFF9F0', 200: '#FFF3E0' },
+            sage: { 50: '#f6f7f4', 100: '#e8ebe3', 200: '#d4d9ca', 400: '#8a9a6f', 500: '#6b7d50', 600: '#556840', 700: '#3d4e2e', 800: '#2d3a22' },
+            warm: { 50: '#faf8f5', 100: '#f3efe8', 200: '#e8e0d4', 400: '#b8a88e', 500: '#9c8b6e', 600: '#7a6c54' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', 'Noto Sans SC', sans-serif; -webkit-font-smoothing: antialiased; }
+    .zh { font-family: 'Noto Sans SC', 'Inter', sans-serif; }
+    [data-lang="zh"] { display: none; }
+    html[lang="zh"] [data-lang="en"] { display: none; }
+    html[lang="zh"] [data-lang="zh"] { display: block; }
+    html[lang="zh"] span[data-lang="zh"], html[lang="zh"] a[data-lang="zh"],
+    html[lang="zh"] td[data-lang="zh"], html[lang="zh"] th[data-lang="zh"],
+    html[lang="zh"] h1[data-lang="zh"], html[lang="zh"] h2[data-lang="zh"],
+    html[lang="zh"] h3[data-lang="zh"], html[lang="zh"] p[data-lang="zh"] { display: inline; }
+    html[lang="zh"] div[data-lang="zh"] { display: block; }
+    html[lang="zh"] span[data-lang="en"], html[lang="zh"] a[data-lang="en"],
+    html[lang="zh"] td[data-lang="en"], html[lang="zh"] th[data-lang="en"],
+    html[lang="zh"] h1[data-lang="en"], html[lang="zh"] h2[data-lang="en"],
+    html[lang="zh"] h3[data-lang="en"], html[lang="zh"] p[data-lang="en"] { display: none; }
+    html { scroll-behavior: smooth; }
+    .nav-glass { background: rgba(255,253,249,0.82); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); }
+    .nav-item { transition: color 0.2s; }
+    .nav-item:hover { color: #556840; }
+    .pill { border-radius: 980px; }
+    .tab-btn { transition: all 0.2s; }
+    .tab-btn.active { background: #556840; color: white; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .gradient-text { background: linear-gradient(135deg, #3d4e2e 0%, #6b7d50 50%, #8a9a6f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    /* Match detail expand */
+    .match-details { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .match-details.open { max-height: 2000px; }
+    .detail-toggle svg { transition: transform 0.3s ease; }
+    .detail-toggle.open svg { transform: rotate(180deg); }
+    /* Hole dots */
+    .hole-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .hole-dot.red-win { background: #dc2626; }
+    .hole-dot.blue-win { background: #2563eb; }
+    .hole-dot.halved { background: #e5e7eb; }
+    /* Group card gradient */
+    .group-card { position: relative; border-radius: 16px; overflow: hidden; }
+    .group-card::before { content: ''; position: absolute; inset: 0; opacity: 0.06; pointer-events: none;
+      background: linear-gradient(to right, #dc2626, transparent 30%, transparent 70%, #2563eb); }
+    @media (max-width: 480px) {
+      .hole-dot { width: 11px; height: 11px; }
+      .group-players { grid-template-columns: 1fr !important; }
+    }
+    /* Rank badge */
+    .rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .rank-2 { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+    .rank-3 { background: linear-gradient(135deg, #b45309, #92400e); }
+    @media (max-width: 640px) {
+      .hero-title { font-size: 2rem !important; }
+      .match-card { padding: 1rem !important; }
+    }
+  </style>
+</head>
+<body class="bg-cream-50 text-gray-800">
+
+  <!-- NAV -->
+  <nav class="nav-glass sticky top-0 z-50 border-b border-warm-200/60">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between h-14">
+        <a href="index.html" class="flex items-center gap-2.5">
+          <img src="https://static.wixstatic.com/media/e0bb63_fc76a093b6b948ac81c63dffc1f9ebb6~mv2.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/HCGA%20Logo_edited.png" alt="HCGA Logo" class="w-9 h-9 rounded-full object-cover">
+          <span class="text-sm font-semibold text-sage-800">HCGA</span>
+        </a>
+        <div class="flex items-center gap-4 text-[13px] text-gray-500 font-medium">
+          <a href="index.html" class="nav-item hidden sm:inline">
+            <span data-lang="en">Home</span><span data-lang="zh">首页</span>
+          </a>
+          <a href="index.html#league" class="nav-item hidden sm:inline">
+            <span data-lang="en">Club League</span><span data-lang="zh">联赛</span>
+          </a>
+          <span class="text-sage-600 font-semibold">
+            <span data-lang="en">Scores</span><span data-lang="zh">成绩</span>
+          </span>
+          <button id="lang-toggle" onclick="toggleLang()" class="pill px-3 py-1 text-xs font-medium text-sage-600 bg-sage-50 hover:bg-sage-100 transition">EN / 中文</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pt-16 pb-12 md:pt-24 md:pb-16 text-center px-6">
+    <div class="max-w-3xl mx-auto">
+      <a href="index.html#league" class="inline-flex items-center gap-1 text-sage-400 text-xs font-medium mb-4 hover:text-sage-600 transition">
+        ← <span data-lang="en">Back to Club League</span><span data-lang="zh">返回俱乐部联赛</span>
+      </a>
+      <h1 class="hero-title text-4xl md:text-6xl font-extrabold gradient-text mb-4">
+        <span data-lang="en">League Scores</span><span data-lang="zh" class="zh">联赛成绩</span>
+      </h1>
+      <p class="text-base text-gray-400">
+        <span data-lang="en">2026 HCGA Club League &mdash; Season Standings & Match Results</span>
+        <span data-lang="zh">2026 HCGA 俱乐部联赛 &mdash; 赛季积分榜 & 比赛记录</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- TAB NAVIGATION -->
+  <div class="sticky top-14 z-40 bg-cream-50/90 backdrop-blur-md border-b border-warm-200/40">
+    <div class="max-w-4xl mx-auto px-6 flex gap-2 py-3 overflow-x-auto">
+      <button class="tab-btn active pill px-4 py-1.5 text-xs font-semibold bg-warm-100 text-gray-500 whitespace-nowrap" onclick="showTab('rankings')">
+        <span data-lang="en">Rankings</span><span data-lang="zh">积分榜</span>
+      </button>
+      <button class="tab-btn pill px-4 py-1.5 text-xs font-medium bg-warm-100 text-gray-500 whitespace-nowrap" onclick="showTab('matches')">
+        <span data-lang="en">Match Results</span><span data-lang="zh">比赛记录</span>
+      </button>
+      <button class="tab-btn pill px-4 py-1.5 text-xs font-medium bg-warm-100 text-gray-500 whitespace-nowrap" onclick="showTab('individual')">
+        <span data-lang="en">Individual</span><span data-lang="zh">个人积分</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB: RANKINGS -->
+  <div id="tab-rankings" class="tab-content active">
+    <section class="py-12 md:py-16">
+      <div class="max-w-3xl mx-auto px-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 text-center">
+          <span data-lang="en">2026 Team Standings</span><span data-lang="zh">2026 队伍积分榜</span>
+        </h2>
+        <p class="text-sm text-gray-400 text-center mb-10">
+          <span data-lang="en">Updated after Match Day 2 (March 21, 2026)</span>
+          <span data-lang="zh">更新至第2场比赛（2026年3月21日）</span>
+        </p>
+
+        <!-- Standings Cards -->
+        <div class="space-y-3">
+          <!-- 1st -->
+          <div class="bg-white rounded-2xl border border-warm-100 p-5 flex items-center gap-4">
+            <div class="rank-1 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">1</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-red-400 shrink-0"></span>
+                <h3 class="font-bold text-gray-900">Fortune Stars <span class="text-gray-400 font-normal">福星队</span></h3>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">Magnolia Creek GC &middot; Captain: 李良根</p>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-extrabold text-sage-600">4</p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-wide">
+                <span data-lang="en">Points</span><span data-lang="zh">积分</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- 2nd-5th tied at 0 -->
+          <div class="bg-white rounded-2xl border border-warm-100 p-5 flex items-center gap-4 opacity-70">
+            <div class="rank-2 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-amber-400 shrink-0"></span>
+                <h3 class="font-semibold text-gray-900">GreatWood <span class="text-gray-400 font-normal">巨木联队</span></h3>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">Greatwood GC &middot; Captain: James Wu</p>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-extrabold text-gray-300">0</p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-wide"><span data-lang="en">Points</span><span data-lang="zh">积分</span></p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-warm-100 p-5 flex items-center gap-4 opacity-70">
+            <div class="rank-2 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 shrink-0"></span>
+                <h3 class="font-semibold text-gray-900">WillowFork <span class="text-gray-400 font-normal">柳叉队</span></h3>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">Willow Fork CC &middot; Captain: 朱捷</p>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-extrabold text-gray-300">0</p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-wide"><span data-lang="en">Points</span><span data-lang="zh">积分</span></p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-warm-100 p-5 flex items-center gap-4 opacity-70">
+            <div class="rank-2 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-400 shrink-0"></span>
+                <h3 class="font-semibold text-gray-900">FalconPoint <span class="text-gray-400 font-normal">猎鹰队</span></h3>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">Falcon Point &middot; Captain: 谭鹏</p>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-extrabold text-gray-300">0</p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-wide"><span data-lang="en">Points</span><span data-lang="zh">积分</span></p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-warm-100 p-5 flex items-center gap-4 opacity-70">
+            <div class="rank-2 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-violet-400 shrink-0"></span>
+                <h3 class="font-semibold text-gray-900">WindRose <span class="text-gray-400 font-normal">北斗星队</span></h3>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">Hearthstone CC &middot; Captain: 王建荣</p>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-extrabold text-gray-300">0</p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-wide"><span data-lang="en">Points</span><span data-lang="zh">积分</span></p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-warm-100 p-5 flex items-center gap-4 opacity-70">
+            <div class="rank-2 w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-gray-800 shrink-0"></span>
+                <h3 class="font-semibold text-gray-900">BlackHawk <span class="text-gray-400 font-normal">黑鹰队</span></h3>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">Blackhawk CC &middot; Captain: Ben Duan</p>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-extrabold text-gray-300">0</p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-wide"><span data-lang="en">Points</span><span data-lang="zh">积分</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB: MATCH RESULTS -->
+  <div id="tab-matches" class="tab-content">
+    <section class="py-12 md:py-16">
+      <div class="max-w-3xl mx-auto px-6 space-y-6">
+
+        <!-- Match 2 -->
+        <div class="match-card bg-white rounded-2xl border border-warm-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-warm-100 flex items-center justify-between">
+            <div>
+              <p class="text-[10px] text-sage-400 uppercase tracking-widest font-semibold">Match Day 2</p>
+              <p class="text-sm font-semibold text-gray-900 mt-0.5">March 21, 2026</p>
+            </div>
+            <span class="pill px-3 py-1 text-[10px] bg-sage-50 text-sage-600 font-semibold">Willow Fork GC</span>
+          </div>
+          <div class="px-6 py-5">
+            <div class="flex items-center justify-between">
+              <div class="text-center flex-1">
+                <span class="w-3 h-3 rounded-full bg-red-400 inline-block mb-1"></span>
+                <p class="font-bold text-gray-900 text-sm">Fortune Stars</p>
+                <p class="text-xs text-gray-400">福星队</p>
+              </div>
+              <div class="px-4">
+                <p class="text-3xl font-black text-gray-900">2 <span class="text-gray-300">:</span> 1</p>
+                <p class="text-[10px] text-sage-500 text-center mt-1 font-semibold">
+                  <span data-lang="en">FINAL</span><span data-lang="zh">终局</span>
+                </p>
+              </div>
+              <div class="text-center flex-1">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block mb-1"></span>
+                <p class="font-bold text-gray-900 text-sm">WillowFork</p>
+                <p class="text-xs text-gray-400">柳叉队</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-warm-100 grid grid-cols-2 gap-4 text-xs">
+              <div>
+                <p class="text-gray-400 mb-1"><span data-lang="en">Scorers</span><span data-lang="zh">得分球员</span></p>
+                <p class="text-gray-700">Kathy Zhang, Maggie Sun, 沈忠良, Alex Wu</p>
+              </div>
+              <div>
+                <p class="text-gray-400 mb-1"><span data-lang="en">Scorers</span><span data-lang="zh">得分球员</span></p>
+                <p class="text-gray-700">毛有力, 程建国</p>
+              </div>
+            </div>
+
+            <!-- Details Toggle -->
+            <div class="mt-4 pt-3 border-t border-warm-100 text-center">
+              <button class="detail-toggle inline-flex items-center gap-1.5 text-xs font-semibold text-sage-500 hover:text-sage-700 transition" onclick="toggleMatchDetail(this)">
+                <span data-lang="en">Match Details</span><span data-lang="zh">比赛详情</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Expandable Match Details -->
+          <div class="match-details">
+            <div class="px-5 pb-5 space-y-4">
+
+              <!-- Group 1 — Willow Fork wins -->
+              <div class="group-card bg-warm-50 border border-warm-100 p-4">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-3 text-center">
+                  <span data-lang="en">Group 1</span><span data-lang="zh">第 1 组</span>
+                  &nbsp;&middot;&nbsp;
+                  <span class="text-red-400">●</span> <span data-lang="en">WillowFork</span><span data-lang="zh">柳叉队</span>
+                  &nbsp;
+                  <span class="text-blue-500">●</span> <span data-lang="en">Fortune Stars</span><span data-lang="zh">福星队</span>
+                </p>
+                <div class="flex items-center justify-between gap-3">
+                  <!-- Red Score -->
+                  <div class="text-2xl font-black text-red-500 w-8 text-center shrink-0">1</div>
+                  <!-- Players -->
+                  <div class="flex-1 min-w-0">
+                    <div class="group-players grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">程建国</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Youli Mao</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Sally Xia</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Joy lifestyle</span>
+                      </div>
+                    </div>
+                    <!-- Hole by hole -->
+                    <div class="mt-2.5 space-y-1">
+                      <div class="flex gap-[3px] flex-wrap">
+                        <span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span>
+                      </div>
+                      <div class="flex gap-[3px] flex-wrap">
+                        <span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Blue Score -->
+                  <div class="text-2xl font-black text-blue-500 w-8 text-center shrink-0">0</div>
+                </div>
+                <p class="text-[11px] text-gray-400 text-center mt-2.5 font-medium">
+                  <span data-lang="en">Red wins 2&amp;1</span>
+                  <span data-lang="zh">红赢 2 洞剩 1 洞 提前结束</span>
+                </p>
+              </div>
+
+              <!-- Group 2 — Fortune Stars wins -->
+              <div class="group-card bg-warm-50 border border-warm-100 p-4">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-3 text-center">
+                  <span data-lang="en">Group 2</span><span data-lang="zh">第 2 组</span>
+                  &nbsp;&middot;&nbsp;
+                  <span class="text-red-400">●</span> <span data-lang="en">WillowFork</span><span data-lang="zh">柳叉队</span>
+                  &nbsp;
+                  <span class="text-blue-500">●</span> <span data-lang="en">Fortune Stars</span><span data-lang="zh">福星队</span>
+                </p>
+                <div class="flex items-center justify-between gap-3">
+                  <div class="text-2xl font-black text-red-500 w-8 text-center shrink-0 opacity-30">0</div>
+                  <div class="flex-1 min-w-0">
+                    <div class="group-players grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">James Yeh</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Bing Gong</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Kathy Zhang</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Maggie 孙咏</span>
+                      </div>
+                    </div>
+                    <div class="mt-2.5 space-y-1">
+                      <div class="flex gap-[3px] flex-wrap">
+                        <span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span>
+                      </div>
+                      <div class="flex gap-[3px] flex-wrap">
+                        <span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-2xl font-black text-blue-500 w-8 text-center shrink-0">1</div>
+                </div>
+                <p class="text-[11px] text-gray-400 text-center mt-2.5 font-medium">
+                  <span data-lang="en">Blue wins 2&amp;1</span>
+                  <span data-lang="zh">蓝赢 2 洞剩 1 洞 提前结束</span>
+                </p>
+              </div>
+
+              <!-- Group 3 — Fortune Stars wins -->
+              <div class="group-card bg-warm-50 border border-warm-100 p-4">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-3 text-center">
+                  <span data-lang="en">Group 3</span><span data-lang="zh">第 3 组</span>
+                  &nbsp;&middot;&nbsp;
+                  <span class="text-red-400">●</span> <span data-lang="en">WillowFork</span><span data-lang="zh">柳叉队</span>
+                  &nbsp;
+                  <span class="text-blue-500">●</span> <span data-lang="en">Fortune Stars</span><span data-lang="zh">福星队</span>
+                </p>
+                <div class="flex items-center justify-between gap-3">
+                  <div class="text-2xl font-black text-red-500 w-8 text-center shrink-0 opacity-30">0</div>
+                  <div class="flex-1 min-w-0">
+                    <div class="group-players grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">朱捷</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Guohua Zong</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">Alex</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="text-gray-800 font-medium truncate">沈忠良</span>
+                      </div>
+                    </div>
+                    <div class="mt-2.5 space-y-1">
+                      <div class="flex gap-[3px] flex-wrap">
+                        <span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot red-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span>
+                      </div>
+                      <div class="flex gap-[3px] flex-wrap">
+                        <span class="hole-dot blue-win"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot blue-win"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span><span class="hole-dot halved"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-2xl font-black text-blue-500 w-8 text-center shrink-0">1</div>
+                </div>
+                <p class="text-[11px] text-gray-400 text-center mt-2.5 font-medium">
+                  <span data-lang="en">Blue wins 3&amp;2</span>
+                  <span data-lang="zh">蓝赢 3 洞剩 2 洞 提前结束</span>
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Match 1 -->
+        <div class="match-card bg-white rounded-2xl border border-warm-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-warm-100 flex items-center justify-between">
+            <div>
+              <p class="text-[10px] text-sage-400 uppercase tracking-widest font-semibold">Match Day 1</p>
+              <p class="text-sm font-semibold text-gray-900 mt-0.5">March 15, 2026</p>
+            </div>
+            <span class="pill px-3 py-1 text-[10px] bg-sage-50 text-sage-600 font-semibold">Magnolia Creek GC</span>
+          </div>
+          <div class="px-6 py-5">
+            <div class="flex items-center justify-between">
+              <div class="text-center flex-1">
+                <span class="w-3 h-3 rounded-full bg-red-400 inline-block mb-1"></span>
+                <p class="font-bold text-gray-900 text-sm">Fortune Stars</p>
+                <p class="text-xs text-gray-400">福星队</p>
+              </div>
+              <div class="px-4">
+                <p class="text-3xl font-black text-gray-900">2 <span class="text-gray-300">:</span> 1</p>
+                <p class="text-[10px] text-sage-500 text-center mt-1 font-semibold">
+                  <span data-lang="en">FINAL</span><span data-lang="zh">终局</span>
+                </p>
+              </div>
+              <div class="text-center flex-1">
+                <span class="w-3 h-3 rounded-full bg-amber-400 inline-block mb-1"></span>
+                <p class="font-bold text-gray-900 text-sm">GreatWood</p>
+                <p class="text-xs text-gray-400">巨木联队</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-warm-100 grid grid-cols-2 gap-4 text-xs">
+              <div>
+                <p class="text-gray-400 mb-1"><span data-lang="en">Scorers</span><span data-lang="zh">得分球员</span></p>
+                <p class="text-gray-700">李良根, Sally Xia, Kathy Zhang, Maggie Sun</p>
+              </div>
+              <div>
+                <p class="text-gray-400 mb-1"><span data-lang="en">Scorers</span><span data-lang="zh">得分球员</span></p>
+                <p class="text-gray-700">袁瑾, Ali</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB: INDIVIDUAL SCORES -->
+  <div id="tab-individual" class="tab-content">
+    <section class="py-12 md:py-16">
+      <div class="max-w-3xl mx-auto px-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2 text-center">
+          <span data-lang="en">Individual Points</span><span data-lang="zh">球员个人积分</span>
+        </h2>
+        <p class="text-sm text-gray-400 text-center mb-10">
+          <span data-lang="en">Points earned in individual matches across the season</span>
+          <span data-lang="zh">赛季中个人比赛所得积分</span>
+        </p>
+
+        <div class="bg-white rounded-2xl border border-warm-100 divide-y divide-warm-100 overflow-hidden">
+          <div class="px-6 py-3 flex items-center justify-between bg-warm-50">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <span data-lang="en">Player</span><span data-lang="zh">球员</span>
+            </span>
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <span data-lang="en">Points</span><span data-lang="zh">积分</span>
+            </span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">Maggie Sun</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-red-50 text-red-500 font-medium">福星</span>
+            </div>
+            <span class="text-lg font-bold text-sage-600">2</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">Kathy Zhang</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-red-50 text-red-500 font-medium">福星</span>
+            </div>
+            <span class="text-lg font-bold text-sage-600">2</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">Sally Xia</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-red-50 text-red-500 font-medium">福星</span>
+            </div>
+            <span class="text-lg font-bold text-sage-600">1</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">李良根</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-red-50 text-red-500 font-medium">福星</span>
+            </div>
+            <span class="text-lg font-bold text-sage-600">1</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">沈忠良</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-red-50 text-red-500 font-medium">福星</span>
+            </div>
+            <span class="text-lg font-bold text-sage-600">1</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">Alex Wu</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-red-50 text-red-500 font-medium">福星</span>
+            </div>
+            <span class="text-lg font-bold text-sage-600">1</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">毛有力</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-emerald-50 text-emerald-600 font-medium">柳叉</span>
+            </div>
+            <span class="text-lg font-bold text-gray-400">1</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">程建国</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-emerald-50 text-emerald-600 font-medium">柳叉</span>
+            </div>
+            <span class="text-lg font-bold text-gray-400">1</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">袁瑾</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-amber-50 text-amber-600 font-medium">巨木</span>
+            </div>
+            <span class="text-lg font-bold text-gray-400">1</span>
+          </div>
+          <div class="px-6 py-3.5 flex items-center justify-between">
+            <div>
+              <span class="font-semibold text-sm text-gray-900">Ali</span>
+              <span class="ml-2 pill px-2 py-0.5 text-[10px] bg-amber-50 text-amber-600 font-medium">巨木</span>
+            </div>
+            <span class="text-lg font-bold text-gray-400">1</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-warm-200/60 py-8">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <a href="index.html" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-sage-600 transition mb-4">
+        <img src="https://static.wixstatic.com/media/e0bb63_fc76a093b6b948ac81c63dffc1f9ebb6~mv2.png/v1/fill/w_60,h_60,al_c,q_85,enc_auto/HCGA%20Logo_edited.png" alt="HCGA" class="w-6 h-6 rounded-full">
+        <span data-lang="en">Back to HCGA Home</span><span data-lang="zh">返回 HCGA 首页</span>
+      </a>
+      <p class="text-[11px] text-gray-300">&copy; 2026 HCGA. <span data-lang="en">A 501(c)(3) non-profit organization.</span><span data-lang="zh">501(c)(3) 非营利组织。</span></p>
+    </div>
+  </footer>
+
+  <script>
+    let currentLang = 'en';
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      document.documentElement.lang = currentLang;
+      document.getElementById('lang-toggle').textContent = currentLang === 'en' ? 'EN / 中文' : '中文 / EN';
+    }
+
+    function toggleMatchDetail(btn) {
+      const details = btn.closest('.match-card').querySelector('.match-details');
+      btn.classList.toggle('open');
+      details.classList.toggle('open');
+    }
+
+    function showTab(name) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      event.target.closest('.tab-btn').classList.add('active');
+    }
+  </script>
+</body>
+</html>

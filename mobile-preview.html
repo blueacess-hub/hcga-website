@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCGA Mobile Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .preview-wrapper {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .phone-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .phone-label {
+      color: #888;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    /* iPhone frame */
+    .iphone-frame {
+      width: 393px;
+      height: 852px;
+      background: #000;
+      border-radius: 50px;
+      padding: 12px;
+      box-shadow:
+        0 0 0 2px #333,
+        0 40px 80px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .iphone-frame::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #000;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 40px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .iphone-screen iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .ctrl-btn {
+      padding: 8px 20px;
+      border-radius: 980px;
+      border: 1px solid #444;
+      background: #2a2a2a;
+      color: #ccc;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ctrl-btn:hover { background: #3a3a3a; color: #fff; }
+    .ctrl-btn.active { background: #556840; color: #fff; border-color: #556840; }
+
+    .hint {
+      color: #555;
+      font-size: 11px;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .preview-wrapper { flex-direction: column; align-items: center; }
+      .iphone-frame { width: 340px; height: 736px; border-radius: 44px; padding: 10px; }
+      .iphone-screen { border-radius: 35px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preview-wrapper">
+    <!-- English Version -->
+    <div class="phone-column">
+      <span class="phone-label">ENGLISH</span>
+      <div class="iphone-frame">
+        <div class="iphone-screen">
+          <iframe id="frame-en" src="index.html"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chinese Version -->
+    <div class="phone-column">
+      <span class="phone-label">中文</span>
+      <div class="iphone-frame">
+        <div class="iphone-screen">
+          <iframe id="frame-zh" src="index.html" onload="this.contentDocument.documentElement.lang='zh'; this.contentDocument.getElementById('lang-toggle').click();"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint" style="position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); color: #555; font-size: 11px;">
+    Scroll inside each phone to preview &middot; 在手机框内滚动预览
+  </p>
+
+</body>
+</html>
